@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-research}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-research}
+      POSTGRES_DB: ${POSTGRES_DB:-research_memory}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    env_file:
+      - .env
+    environment:
+      PORT: 8000
+      CHROMA_PATH: /app/chroma
+      HF_HOME: /app/cache/huggingface
+      SENTENCE_TRANSFORMERS_HOME: /app/cache/sentence-transformers
+      RESEARCH_ARXIV_CACHE_DIR: /app/cache/research/arxiv
+      RESEARCH_SEMANTIC_SCHOLAR_CACHE_DIR: /app/cache/research/semantic_scholar
+      RESEARCH_OPENALEX_CACHE_DIR: /app/cache/research/openalex
+      PERSISTENT_TRANSCRIPT_ENABLED: "true"
+      SESSION_SUMMARY_ENABLED: "true"
+      LONG_TERM_MEMORY_ENABLED: "true"
+      RESEARCH_MEMORY_ENABLED: "true"
+      MEMORY_DATABASE_URL: "postgresql://${POSTGRES_USER:-research}:${POSTGRES_PASSWORD:-research}@postgres:5432/${POSTGRES_DB:-research_memory}"
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - chroma-data:/app/chroma
+      - cache-data:/app/cache
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s
+
+volumes:
+  postgres-data:
+  chroma-data:
+  cache-data:

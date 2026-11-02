@@ -1,0 +1,139 @@
+name: Router Model Experiment
+
+on:
+  workflow_dispatch:
+    inputs:
+      baseline_model:
+        description: Baseline OpenRouter model id
+        required: true
+        default: xiaomi/mimo-v2-flash:free
+        type: string
+      candidate_model:
+        description: Candidate OpenRouter model id
+        required: true
+        type: string
+      enforce:
+        description: Fail the workflow when the candidate is rejected
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  router-experiment:
+    name: Compare router models
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      PYTHONPATH: .
+      TOKENIZERS_PARALLELISM: "false"
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      ROUTER_BACKEND: openrouter
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install locked dependencies
+        run: |
+          python -m pip install --upgrade pip uv
+          uv sync --frozen --extra api --dev
+
+      - name: Check provider configuration
+        id: provider
+        shell: bash
+        run: |
+          if [ -z "$OPENROUTER_API_KEY" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "## Router model experiment" >> "$GITHUB_STEP_SUMMARY"
+            echo "INCONCLUSIVE: OPENROUTER_API_KEY is not configured for GitHub Actions." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run baseline router evaluation
+        if: steps.provider.outputs.configured == 'true'
+        env:
+          ROUTER_MODEL: ${{ inputs.baseline_model }}
+          OPENROUTER_MODEL: ${{ inputs.baseline_model }}
+        run: >-
+          uv run python eval/router_eval.py
+          --run-router
+          --strategy baseline
+          --min-accuracy 0.0
+          --out /tmp/router-baseline.json
+
+      - name: Run candidate router evaluation
+        if: steps.provider.outputs.configured == 'true'
+        env:
+          ROUTER_MODEL: ${{ inputs.candidate_model }}
+          OPENROUTER_MODEL: ${{ inputs.candidate_model }}
+        run: >-
+          uv run python eval/router_eval.py
+          --run-router
+          --strategy candidate
+          --min-accuracy 0.0
+          --out /tmp/router-candidate.json
+
+      - name: Compare candidate to baseline
+        if: steps.provider.outputs.configured == 'true'
+        id: comparison
+        shell: bash
+        run: |
+          args=(
+            /tmp/router-baseline.json
+            /tmp/router-candidate.json
+            --out /tmp/router-experiment.json
+          )
+          if [ "${{ inputs.enforce }}" = "true" ]; then
+            args+=(--enforce)
+          fi
+          set +e
+          uv run python eval/router_experiment.py "${args[@]}"
+          status=$?
+          set -e
+          cat /tmp/router-experiment.json
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          if [ "$status" -ne 0 ]; then
+            exit "$status"
+          fi
+
+      - name: Write experiment summary
+        if: steps.provider.outputs.configured == 'true' && always()
+        shell: bash
+        run: |
+          echo "## Router model experiment" >> "$GITHUB_STEP_SUMMARY"
+          echo "Baseline: ${{ inputs.baseline_model }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Candidate: ${{ inputs.candidate_model }}" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f /tmp/router-experiment.json ]; then
+            echo '```json' >> "$GITHUB_STEP_SUMMARY"
+            python - <<'PY' >> "$GITHUB_STEP_SUMMARY"
+          import json
+          with open('/tmp/router-experiment.json', encoding='utf-8') as handle:
+              report = json.load(handle)
+          print(json.dumps({
+              'verdict': report.get('verdict'),
+              'constraints': report.get('constraints'),
+              'latency': report.get('latency'),
+              'improvements': report.get('improvements'),
+              'cost': report.get('cost'),
+          }, ensure_ascii=False, indent=2))
+          PY
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload experiment reports
+        if: steps.provider.outputs.configured == 'true' && always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: router-model-experiment
+          path: |
+            /tmp/router-baseline.json
+            /tmp/router-candidate.json
+            /tmp/router-experiment.json
+          if-no-files-found: warn

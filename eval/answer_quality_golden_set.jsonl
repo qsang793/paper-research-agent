@@ -1,0 +1,4 @@
+{"id":"transformer-original-vi","query":"Transformer paper có gì","task_type":"paper_lookup","expected_papers":["1706.03762"],"expected_terms":["attention mechanism","self-attention","encoder","decoder"],"expected_answer_type":"canonical_paper_explanation"}
+{"id":"lora-qlora-comparison","query":"compare LoRA and QLoRA papers","task_type":"comparison","expected_papers":["2106.09685","2305.14314"],"expected_terms":["low-rank adaptation","4-bit","quantization","memory"],"expected_answer_type":"paper_comparison"}
+{"id":"ros2-robotics-concept","query":"ROS2 trong robotics là gì","task_type":"concept","expected_papers":["2306.17157","2209.14030"],"expected_terms":["ROS 2","Robot Operating System 2","robotics","middleware"],"expected_answer_type":"concept_grounded"}
+{"id":"no-evidence-personal","query":"paper about my private birthday plan","task_type":"no_answer","expected_papers":[],"expected_terms":[],"expected_answer_type":"no_evidence"}

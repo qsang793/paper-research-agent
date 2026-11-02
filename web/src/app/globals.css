@@ -1,0 +1,241 @@
+/* Space Grotesk = display fallback for CohereText (proprietary, not bundled).
+   Inter (body/UI fallback for Unica77) is loaded via next/font in layout.tsx. */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+/* Drive Tailwind's `dark:` variant off the .dark class (controlled by ThemeToggle),
+   not the OS preference — so the toggle governs dark:prose-invert etc. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ============================================================
+   DESIGN TOKENS — Cohere design system (see DESIGN.md)
+   Light is the default (:root); dark applies via [data-theme="dark"]
+   AND the legacy .dark class. White canvas is the default surface;
+   deep-green / navy are reserved for full-width product bands.
+   ============================================================ */
+:root {
+  /* ---- Default: Light Theme (white editorial canvas) ---- */
+  --background: #ffffff;
+  --foreground: #212121;
+
+  --bg-page: #ffffff;        /* Canvas white — dominant page background */
+  --bg-0: #ffffff;
+  --bg-1: #ffffff;           /* Cards / sheets are canvas white */
+  --bg-2: #eeece7;           /* Soft stone — input / hover / warm neutral surface */
+  --bg-3: #e3e0d8;           /* Darker stone — active indicator / tooltip */
+
+  --border-subtle: #f2f2f2;  /* Card border — softest containment line */
+  --border-strong: #d9d9dd;  /* Hairline — list rules and section dividers */
+
+  --text-primary: #212121;   /* Ink — default body + heading text */
+  --text-secondary: #616161; /* Body muted */
+  --text-muted: #93939f;     /* Muted slate — metadata, de-emphasized labels */
+
+  --accent: #17171c;         /* Near-black — primary CTA / brand anchor */
+  --accent-hover: #000000;   /* Cohere black */
+  --accent-muted: rgba(23, 23, 28, 0.06);  /* Subtle near-black wash (active states) */
+
+  --link: #1863dc;           /* Action blue — editorial links, pagination */
+  --link-hover: #14529c;
+  --accent-coral: #ff7759;   /* Coral — editorial taxonomy / warm accents only */
+  --band-green: #003c33;     /* Deep enterprise green — product bands */
+  --band-navy: #071829;      /* Dark navy — security / finance bands */
+  --on-dark: #ffffff;        /* Text/marks on dark bands */
+
+  --focus: #4c6ee6;          /* Focus blue — keyboard focus ring */
+  --focus-ring: rgba(76, 110, 230, 0.4);
+  --input-focus: #9b60aa;    /* Form-focus violet — text input focus border */
+
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.08);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.08);
+  --danger: #b30000;         /* Error red (DESIGN.md) */
+  --danger-bg: rgba(179, 0, 0, 0.06);
+
+  /* Legacy glass aliases — kept flat so existing .glass-* consumers render
+     as plain bordered surfaces (Cohere is flat; no blur, no lift). */
+  --glass-border: var(--border-strong);
+  --glass-surface: var(--bg-1);
+  --glass-highlight: var(--bg-2);
+
+  /* Mostly flat: shadows reserved for floating menus/dialogs only. */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 8px 24px rgba(23, 23, 28, 0.12);
+
+  /* ---- Radius scale (DESIGN.md) ---- */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+  --radius-pill: 32px;
+  --radius-full: 9999px;
+
+  /* ---- Spacing scale (8px base → 80px section) ---- */
+  --space-xxs: 2px;
+  --space-xs: 6px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-xxl: 32px;
+  --space-section: 80px;
+
+  /* ---- Fonts (documented fallbacks for proprietary Cohere faces) ---- */
+  --font-display: 'Space Grotesk', 'Inter', ui-sans-serif, system-ui, sans-serif;  /* CohereText */
+  --font-sans: 'Inter', 'Arial', ui-sans-serif, system-ui, sans-serif;             /* Unica77 */
+  --font-mono: ui-monospace, 'SF Mono', 'JetBrains Mono', 'Cascadia Code', monospace; /* CohereMono labels + code */
+}
+
+[data-theme="dark"],
+.dark {
+  /* ---- Dark Theme (derived from DESIGN.md dark bands — near-black base) ---- */
+  --background: #17171c;
+  --foreground: #ffffff;
+
+  --bg-page: #17171c;        /* Near-black brand anchor */
+  --bg-0: #17171c;
+  --bg-1: #1f1f25;           /* Elevated card */
+  --bg-2: #262630;           /* Input / hover */
+  --bg-3: #32323d;           /* Active indicator / tooltip */
+
+  --border-subtle: #2a2a32;
+  --border-strong: #3a3a44;
+
+  --text-primary: #ffffff;   /* on-dark */
+  --text-secondary: #b9b9c4;
+  --text-muted: #93939f;
+
+  --accent: #ffffff;         /* White pill CTA on dark surfaces */
+  --accent-hover: #eeece7;   /* Soft stone */
+  --accent-muted: rgba(255, 255, 255, 0.08);
+
+  --link: #6f97e8;           /* Lighter action blue for dark contrast */
+  --link-hover: #9db8f0;
+  --accent-coral: #ff7759;
+  --band-green: #003c33;
+  --band-navy: #071829;
+  --on-dark: #17171c;        /* Text that sits on the white accent pill */
+
+  --focus: #6f97e8;
+  --focus-ring: rgba(111, 151, 232, 0.5);
+  --input-focus: #b07fbf;
+
+  --success: #10b981;
+  --success-bg: rgba(16, 185, 129, 0.15);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.15);
+  --danger: #ff7066;
+  --danger-bg: rgba(255, 112, 102, 0.14);
+
+  --glass-border: var(--border-strong);
+  --glass-surface: var(--bg-1);
+  --glass-highlight: var(--bg-2);
+
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  min-height: 100vh;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Display typography — tight, carved headlines (CohereText spirit). */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+code, pre, .mono {
+  font-family: var(--font-mono);
+}
+
+/* ---- Typography utilities (DESIGN.md roles actually used in the app) ---- */
+.type-hero {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.type-section {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+.type-mono-label {
+  font-family: var(--font-mono);
+  letter-spacing: 0.28px;
+  text-transform: uppercase;
+}
+
+/* Accessible focus ring — focus-blue (DESIGN.md). */
+*:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+/* Custom Scrollbar — theme-aware */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}
+
+/* ---- Surface utilities ----
+   Flat, bordered surfaces (Cohere is mostly flat: depth comes from surface
+   alternation + hairline borders, not blur or drop shadows). Names retained
+   for backward compatibility with existing consumers. */
+.glass-panel {
+  background-color: var(--bg-1);
+  border: 1px solid var(--border-strong);
+}
+
+/* Elevated tier — flat white/elevated card with a hairline border. */
+.glass-panel-elevated {
+  background-color: var(--bg-1);
+  border: 1px solid var(--border-strong);
+}
+
+.glass-card-hover {
+  transition: border-color 0.2s ease;
+}
+
+.glass-card-hover:hover {
+  border-color: var(--accent);
+}
+
+/* Respect reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,50 @@
+{"id":"ros2-definition","query":"ROS2 trong robotics là gì","expected_papers":["2306.17157"],"expected_terms":["ROS 2","robotics","middleware"],"task_type":"concept","notes":"Should not fail because of Vietnamese filler words."}
+{"id":"transformer-id","query":"paper 1706.03762 summary","expected_papers":["1706.03762"],"expected_terms":["Attention Is All You Need","Transformer","attention"],"task_type":"paper_lookup"}
+{"id":"rag-reranking","query":"recent papers about retrieval augmented generation reranking","expected_papers":[],"expected_terms":["retrieval augmented generation","reranking"],"task_type":"recent"}
+{"id":"lora-qlora-compare","query":"compare LoRA and QLoRA papers","expected_papers":["2106.09685","2305.14314"],"expected_terms":["LoRA","QLoRA","low-rank"],"task_type":"comparison"}
+{"id":"mamba-explain","query":"Mamba architecture paper explained","expected_papers":["2312.00752"],"expected_terms":["Mamba","state space model"],"task_type":"concept"}
+{"id":"gnn-surveys","query":"best survey papers about graph neural networks","expected_papers":[],"expected_terms":["graph neural network","survey"],"task_type":"survey"}
+{"id":"swebench-benchmarks","query":"what benchmarks are used in SWE-bench papers","expected_papers":["2310.06770"],"expected_terms":["SWE-bench","benchmark"],"task_type":"benchmark"}
+{"id":"diffusion-survey","query":"survey papers about diffusion models in computer vision","expected_papers":[],"expected_terms":["diffusion models","survey"],"task_type":"survey"}
+{"id":"bert-original","query":"original BERT paper","expected_papers":["1810.04805"],"expected_terms":["BERT","bidirectional"],"task_type":"paper_lookup"}
+{"id":"gpt3-paper","query":"GPT-3 language model paper","expected_papers":["2005.14165"],"expected_terms":["language models","few-shot"],"task_type":"paper_lookup"}
+{"id":"clip-paper","query":"CLIP paper contrastive language image pretraining","expected_papers":["2103.00020"],"expected_terms":["CLIP","contrastive"],"task_type":"paper_lookup"}
+{"id":"dpo-paper","query":"Direct Preference Optimization paper summary","expected_papers":["2305.18290"],"expected_terms":["DPO","preference optimization"],"task_type":"paper_lookup"}
+{"id":"rlhf-survey","query":"survey of reinforcement learning from human feedback","expected_papers":[],"expected_terms":["RLHF","human feedback"],"task_type":"survey"}
+{"id":"rag-original","query":"Retrieval-Augmented Generation original paper","expected_papers":["2005.11401"],"expected_terms":["RAG","knowledge-intensive"],"task_type":"paper_lookup"}
+{"id":"colbert-paper","query":"ColBERT late interaction retrieval paper","expected_papers":["2004.12832"],"expected_terms":["ColBERT","late interaction"],"task_type":"paper_lookup"}
+{"id":"dense-passage-retrieval","query":"Dense Passage Retrieval paper","expected_papers":["2004.04906"],"expected_terms":["DPR","dense passage retrieval"],"task_type":"paper_lookup"}
+{"id":"hybrid-search","query":"hybrid dense sparse retrieval papers","expected_papers":[],"expected_terms":["dense","sparse","hybrid retrieval"],"task_type":"recent"}
+{"id":"cross-encoder-rerank","query":"cross encoder reranking information retrieval paper","expected_papers":[],"expected_terms":["cross-encoder","reranking"],"task_type":"concept"}
+{"id":"graph-rag","query":"GraphRAG paper and workflow","expected_papers":[],"expected_terms":["GraphRAG","graph"],"task_type":"concept"}
+{"id":"contextual-retrieval","query":"contextual retrieval for RAG chunks","expected_papers":[],"expected_terms":["contextual retrieval","chunks"],"task_type":"concept"}
+{"id":"agentic-rag","query":"agentic RAG research papers","expected_papers":[],"expected_terms":["agentic","RAG"],"task_type":"recent"}
+{"id":"multi-agent-llm-survey","query":"multi agent LLM survey paper","expected_papers":[],"expected_terms":["multi-agent","large language model","survey"],"task_type":"survey"}
+{"id":"toolformer","query":"Toolformer paper explanation","expected_papers":["2302.04761"],"expected_terms":["Toolformer","tools"],"task_type":"paper_lookup"}
+{"id":"react-paper","query":"ReAct reasoning acting language model paper","expected_papers":["2210.03629"],"expected_terms":["ReAct","reasoning","acting"],"task_type":"paper_lookup"}
+{"id":"tree-of-thought","query":"Tree of Thoughts paper","expected_papers":["2305.10601"],"expected_terms":["Tree of Thoughts","problem solving"],"task_type":"paper_lookup"}
+{"id":"chain-of-thought","query":"Chain-of-Thought prompting paper","expected_papers":["2201.11903"],"expected_terms":["chain of thought","reasoning"],"task_type":"paper_lookup"}
+{"id":"self-consistency","query":"self consistency chain of thought paper","expected_papers":["2203.11171"],"expected_terms":["self-consistency","chain of thought"],"task_type":"paper_lookup"}
+{"id":"constitutional-ai","query":"Constitutional AI paper summary","expected_papers":["2212.08073"],"expected_terms":["Constitutional AI","AI feedback"],"task_type":"paper_lookup"}
+{"id":"llama-paper","query":"LLaMA original paper","expected_papers":["2302.13971"],"expected_terms":["LLaMA","foundation language models"],"task_type":"paper_lookup"}
+{"id":"llama2-paper","query":"Llama 2 paper safety and helpfulness","expected_papers":["2307.09288"],"expected_terms":["Llama 2","safety"],"task_type":"paper_lookup"}
+{"id":"mixtral-paper","query":"Mixtral sparse mixture of experts paper","expected_papers":["2401.04088"],"expected_terms":["Mixtral","mixture of experts"],"task_type":"paper_lookup"}
+{"id":"moe-survey","query":"survey papers on mixture of experts transformers","expected_papers":[],"expected_terms":["mixture of experts","transformer","survey"],"task_type":"survey"}
+{"id":"vision-transformer","query":"Vision Transformer original paper","expected_papers":["2010.11929"],"expected_terms":["Vision Transformer","image recognition"],"task_type":"paper_lookup"}
+{"id":"sam-paper","query":"Segment Anything paper summary","expected_papers":["2304.02643"],"expected_terms":["Segment Anything","image segmentation"],"task_type":"paper_lookup"}
+{"id":"alphafold2-paper","query":"AlphaFold2 paper explained","expected_papers":[],"expected_terms":["AlphaFold","protein structure"],"task_type":"paper_lookup"}
+{"id":"gnn-benchmarks","query":"benchmarks used in graph neural network papers","expected_papers":[],"expected_terms":["benchmark","graph neural network"],"task_type":"benchmark"}
+{"id":"code-generation-eval","query":"papers about code generation evaluation benchmarks","expected_papers":[],"expected_terms":["code generation","benchmark","evaluation"],"task_type":"benchmark"}
+{"id":"humaneval-paper","query":"HumanEval benchmark paper","expected_papers":["2107.03374"],"expected_terms":["HumanEval","code"],"task_type":"paper_lookup"}
+{"id":"mbpp-paper","query":"MBPP benchmark paper","expected_papers":[],"expected_terms":["MBPP","program synthesis"],"task_type":"paper_lookup"}
+{"id":"retrieval-evaluation","query":"papers about evaluating retrieval augmented generation systems","expected_papers":[],"expected_terms":["evaluation","retrieval augmented generation"],"task_type":"survey"}
+{"id":"faithfulness-rag","query":"faithfulness metrics for RAG papers","expected_papers":[],"expected_terms":["faithfulness","RAG"],"task_type":"benchmark"}
+{"id":"hallucination-survey","query":"survey papers on hallucination in large language models","expected_papers":[],"expected_terms":["hallucination","large language models","survey"],"task_type":"survey"}
+{"id":"long-context-retrieval","query":"long context versus retrieval augmented generation papers","expected_papers":[],"expected_terms":["long context","retrieval augmented generation"],"task_type":"comparison"}
+{"id":"needle-haystack","query":"needle in a haystack long context benchmark paper","expected_papers":[],"expected_terms":["needle in a haystack","long context"],"task_type":"benchmark"}
+{"id":"semantic-scholar-api","query":"Semantic Scholar open data platform paper","expected_papers":["2301.10140"],"expected_terms":["Semantic Scholar","Open Data Platform"],"task_type":"paper_lookup"}
+{"id":"openalex-paper","query":"OpenAlex index scholarly works paper","expected_papers":["2205.01833"],"expected_terms":["OpenAlex","scholarly works"],"task_type":"paper_lookup"}
+{"id":"arxiv-metadata","query":"arXiv paper metadata API research discovery","expected_papers":[],"expected_terms":["arXiv","metadata"],"task_type":"concept"}
+{"id":"robotics-llm-survey","query":"survey papers about large language models for robotics","expected_papers":[],"expected_terms":["robotics","large language models","survey"],"task_type":"survey"}
+{"id":"ros2-navigation","query":"ROS 2 navigation robotics papers","expected_papers":[],"expected_terms":["ROS 2","navigation","robotics"],"task_type":"concept"}
+{"id":"robot-operating-system-paper","query":"Robot Operating System 2 research paper","expected_papers":[],"expected_terms":["Robot Operating System 2","ROS 2"],"task_type":"paper_lookup"}

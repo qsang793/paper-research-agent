@@ -1,0 +1,137 @@
+name: Backend Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Publish a new image or deploy an existing digest
+        required: true
+        default: publish
+        type: choice
+        options:
+          - publish
+          - deploy-staging
+          - deploy-production
+      image_digest:
+        description: Required for deploy operations (sha256:... from publish summary)
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  checks: read
+  packages: write
+  attestations: write
+  id-token: write
+
+jobs:
+  publish:
+    if: inputs.operation == 'publish'
+    name: Publish backend image
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Require current main
+        run: test "$GITHUB_REF" = "refs/heads/main"
+
+      - uses: actions/checkout@v6
+
+      - name: Require successful release checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for check in "Secret hygiene" "Backend contracts" "Frontend contracts" "Docker runtime"; do
+            conclusion=$(gh api \
+              "repos/$GITHUB_REPOSITORY/commits/$GITHUB_SHA/check-runs" \
+              --jq ".check_runs[] | select(.name == \"$check\") | .conclusion" \
+              | head -1)
+            test "$conclusion" = "success" || {
+              echo "Required check is not successful: $check"
+              exit 1
+            }
+          done
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and publish immutable image
+        id: image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ghcr.io/${{ github.repository }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Attest image provenance
+        if: github.event.repository.visibility == 'public'
+        uses: actions/attest@v4
+        with:
+          subject-name: ghcr.io/${{ github.repository }}
+          subject-digest: ${{ steps.image.outputs.digest }}
+          push-to-registry: true
+
+      - name: Record private-repository attestation limitation
+        if: github.event.repository.visibility != 'public'
+        run: echo "::notice::GitHub artifact attestations are unavailable for user-owned private repositories."
+
+      - name: Record immutable image
+        run: |
+          echo "## Backend image" >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit: $GITHUB_SHA" >> "$GITHUB_STEP_SUMMARY"
+          echo "Digest: ${{ steps.image.outputs.digest }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Repository visibility: ${{ github.event.repository.visibility }}" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    if: inputs.operation != 'publish'
+    name: Deploy backend image
+    runs-on: ubuntu-24.04
+    environment: ${{ inputs.operation == 'deploy-production' && 'Production' || 'staging' }}
+    steps:
+      - name: Require current main and a valid digest
+        env:
+          IMAGE_DIGEST: ${{ inputs.image_digest }}
+        run: |
+          test "$GITHUB_REF" = "refs/heads/main"
+          [[ "$IMAGE_DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]] || {
+            echo "image_digest must be an immutable sha256 digest"
+            exit 1
+          }
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify published image
+        env:
+          IMAGE_DIGEST: ${{ inputs.image_digest }}
+        run: docker buildx imagetools inspect "ghcr.io/$GITHUB_REPOSITORY@$IMAGE_DIGEST"
+
+      - name: Point Railway at the immutable image
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+          RAILWAY_PROJECT_ID: ${{ vars.RAILWAY_PROJECT_ID }}
+          RAILWAY_SERVICE_ID: ${{ vars.RAILWAY_SERVICE_ID }}
+          RAILWAY_ENVIRONMENT_ID: ${{ vars.RAILWAY_ENVIRONMENT_ID }}
+          IMAGE_DIGEST: ${{ inputs.image_digest }}
+        run: >-
+          npx --yes @railway/cli@5.49.0 service source connect
+          --image "ghcr.io/$GITHUB_REPOSITORY@$IMAGE_DIGEST"
+          --project "$RAILWAY_PROJECT_ID"
+          --service "$RAILWAY_SERVICE_ID"
+          --environment "$RAILWAY_ENVIRONMENT_ID"
+
+      - name: Record deployment request
+        env:
+          IMAGE_DIGEST: ${{ inputs.image_digest }}
+        run: |
+          echo "## Railway deployment requested" >> "$GITHUB_STEP_SUMMARY"
+          echo "Environment: ${{ inputs.operation }}" >> "$GITHUB_STEP_SUMMARY"
+          echo "Digest: $IMAGE_DIGEST" >> "$GITHUB_STEP_SUMMARY"

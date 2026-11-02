@@ -1,0 +1,95 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# Environment variables
+.env
+.env.*
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.tfstate
+*.tfstate.*
+credentials.json
+service-account*.json
+kubeconfig
+.vault-token
+.secret*
+
+# Allow templates to be committed
+!.env.example
+!.env.*.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ChromaDB
+chroma/
+chroma_v2/
+*.sqlite3
+
+# Cache
+cache/
+.cache/
+.pytest_cache/
+.coverage
+.coverage.*
+code-review-*.md
+*.html
+*.json
+!requirements.txt
+!package.json
+!package-lock.json
+!railway.json
+!tsconfig.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Stores
+stores/
+
+# Agents
+.agents
+.claude
+.codex
+
+# Local worktrees
+.worktrees/

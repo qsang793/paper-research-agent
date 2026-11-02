@@ -1,0 +1,83 @@
+name: Router Live Evaluation
+
+on:
+  workflow_dispatch:
+    inputs:
+      model:
+        description: OpenRouter model id
+        required: true
+        default: xiaomi/mimo-v2-flash:free
+        type: string
+      strategy:
+        description: Strategy label stored in the report
+        required: true
+        default: baseline
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  router-eval:
+    name: Live router evaluation
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      PYTHONPATH: .
+      TOKENIZERS_PARALLELISM: "false"
+      OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+      ROUTER_BACKEND: openrouter
+      ROUTER_MODEL: ${{ inputs.model }}
+      OPENROUTER_MODEL: ${{ inputs.model }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install locked dependencies
+        run: |
+          python -m pip install --upgrade pip uv
+          uv sync --frozen --extra api --dev
+
+      - name: Check provider configuration
+        id: provider
+        shell: bash
+        run: |
+          if [ -z "$OPENROUTER_API_KEY" ]; then
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+            echo "## Router live evaluation" >> "$GITHUB_STEP_SUMMARY"
+            echo "INCONCLUSIVE: OPENROUTER_API_KEY is not configured for GitHub Actions." >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Run live router baseline
+        if: steps.provider.outputs.configured == 'true'
+        run: >-
+          uv run python eval/router_eval.py
+          --run-router
+          --strategy "${{ inputs.strategy }}"
+          --min-accuracy 0.0
+          --out /tmp/router-report.json
+
+      - name: Print report-only gate verdict
+        if: steps.provider.outputs.configured == 'true'
+        run: |
+          uv run python eval/router_gate.py /tmp/router-report.json | tee /tmp/router-gate.txt
+          echo "## Router live evaluation" >> "$GITHUB_STEP_SUMMARY"
+          echo "Model: $ROUTER_MODEL" >> "$GITHUB_STEP_SUMMARY"
+          echo "Strategy: ${{ inputs.strategy }}" >> "$GITHUB_STEP_SUMMARY"
+          echo '```text' >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/router-gate.txt >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload router report
+        if: steps.provider.outputs.configured == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: router-live-report
+          path: /tmp/router-report.json
+          if-no-files-found: error

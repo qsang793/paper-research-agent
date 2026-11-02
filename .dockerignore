@@ -1,0 +1,89 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Testing / local caches
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+*.cover
+.cache/
+cache/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git / CI metadata
+.git/
+.github/
+.gitignore
+
+# Documentation and evaluation-only assets
+docs/
+*.md
+!README.md
+eval/
+experiments/
+
+# Local vector/database data
+chroma/
+chroma_v2/
+chroma_backup*/
+*.db
+*.sqlite
+
+# Environment files
+.env
+.env.*
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+*.tfstate
+*.tfstate.*
+credentials.json
+service-account*.json
+kubeconfig
+.vault-token
+.secret*
+
+# Frontend
+web/
+node_modules/
+
+# Development-only scripts/tests
+scripts/
+tests/
+.agents/
+.codex/
+.worktrees/
+skills/
+cohere/
+lovable-export/
+reskin-landing.png
+agent/query_understanding.py
+agent/query_understanding_prompt.py
+
+# Notebooks
+*.ipynb
+.ipynb_checkpoints/
